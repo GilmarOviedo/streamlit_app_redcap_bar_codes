@@ -39,7 +39,7 @@ def obtener_estilos_css():
         border-radius: 16px;
         text-align: center;
         margin-bottom: 2rem;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 8px 24px rgba(200, 225, 0, 0.3);
         border: 3px solid #C8E100;
     }
     
@@ -49,11 +49,11 @@ def obtener_estilos_css():
         font-weight: 800;
         margin: 0 0 0.5rem 0;
         letter-spacing: -0.5px;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
     
     .header-subtitle {
-        color: rgba(255, 255, 255, 0.9);
+        color: rgba(212, 225, 87, 0.9);
         font-size: 14px;
         font-weight: 500;
         margin: 0;
