@@ -398,7 +398,7 @@ def check_system_requirements():
 # =========================================
 st.markdown("<h1 style='font-size: 20px;'>Descargar códigos de barras de RedCap (PRESIENTE LAB MUESTRAS HUMANAS) y enviar por Email</h1>", unsafe_allow_html=True)
 st.write("Ingresa Record IDs manualmente o carga un archivo CSV para descargar imágenes de códigos de barras desde RedCap y enviarlas por email.")
-
+st.markdown(obtener_estilos_css(), unsafe_allow_html=True)
 # Sección de verificación del sistema
 with st.expander("🔧 Verificación del Sistema"):
     if st.button("Ejecutar Verificación del Sistema"):
