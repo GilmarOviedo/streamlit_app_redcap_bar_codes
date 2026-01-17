@@ -331,8 +331,12 @@ def check_system_requirements():
 # =========================================
 # Interfaz Principal
 # =========================================
-st.markdown("<h1 style='font-size: 20px;'>Descargar códigos de barras de RedCap (PRESIENTE LAB MUESTRAS HUMANAS) y enviar por Email</h1>", unsafe_allow_html=True)
-st.write("Ingresa Record IDs manualmente o carga un archivo CSV para descargar imágenes de códigos de barras desde RedCap y enviarlas por email.")
+st.markdown("""
+<div class='header-container'>
+    <h1>🧬 Extracción de Códigos de Barras</h1>
+    <p class='header-subtitle'>Lab Muestras Humanas • Proyecto PRESIENTE</p>
+</div>
+""", unsafe_allow_html=True)
 st.markdown(obtener_estilos_css(), unsafe_allow_html=True)
 
 with st.expander("🔧 Verificación del Sistema"):
