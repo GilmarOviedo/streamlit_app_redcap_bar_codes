@@ -34,8 +34,8 @@ def generar_email_html(total_capturas, total_records, zip_filename, zip_size_mb)
             <tr>
                 <td align="center">
                     
-                    <!-- Card principal (700px) -->
-                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="700" style="max-width: 700px; width: 100%; background: #f8f9f7; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);">
+                    <!-- Card principal - Fondo beige/crema -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="700" style="max-width: 700px; width: 100%; background: #f5f3ed; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);">
                         
                         <!-- Header corporativo -->
                         <tr>
@@ -55,7 +55,7 @@ def generar_email_html(total_capturas, total_records, zip_filename, zip_size_mb)
                                     <tr>
                                         <!-- Stat 1 -->
                                         <td width="48%" style="padding-right: 12px;">
-                                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background: linear-gradient(135deg, #ffffff 0%, #f5f7f4 100%); border-left: 4px solid #C8E100; border-radius: 12px; padding: 28px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background: linear-gradient(135deg, #faf8f4 0%, #f2ede3 100%); border-left: 4px solid #C8E100; border-radius: 12px; padding: 28px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
                                                 <tr>
                                                     <td align="center">
                                                         <div style="font-size: 48px; font-weight: 800; color: #3d4a18; margin-bottom: 6px; line-height: 1;">{total_capturas}</div>
@@ -67,7 +67,7 @@ def generar_email_html(total_capturas, total_records, zip_filename, zip_size_mb)
                                         
                                         <!-- Stat 2 -->
                                         <td width="48%" style="padding-left: 12px;">
-                                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background: linear-gradient(135deg, #ffffff 0%, #f5f7f4 100%); border-left: 4px solid #C8E100; border-radius: 12px; padding: 28px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background: linear-gradient(135deg, #faf8f4 0%, #f2ede3 100%); border-left: 4px solid #C8E100; border-radius: 12px; padding: 28px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
                                                 <tr>
                                                     <td align="center">
                                                         <div style="font-size: 48px; font-weight: 800; color: #3d4a18; margin-bottom: 6px; line-height: 1;">{total_records}</div>
@@ -80,18 +80,18 @@ def generar_email_html(total_capturas, total_records, zip_filename, zip_size_mb)
                                 </table>
                                 
                                 <!-- Info Card -->
-                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background: #ffffff; border: 2px solid #e8ebe5; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background: #faf8f4; border: 2px solid #e8e4da; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
                                     <tr>
                                         <td style="padding: 28px 24px;">
                                             <h2 style="margin: 0 0 18px 0; color: #3d4a18; font-size: 15px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;">📦 Detalles del Archivo</h2>
                                             
                                             <!-- Info Rows -->
                                             <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                                                <tr style="border-bottom: 2px solid #f0f2ee;">
+                                                <tr style="border-bottom: 2px solid #f0ece2;">
                                                     <td style="color: #5a6c3e; font-size: 14px; padding: 14px 0; font-weight: 600;">Archivo</td>
                                                     <td align="right" style="color: #2d3e1f; font-size: 14px; padding: 14px 0; font-weight: 700;">{zip_filename}</td>
                                                 </tr>
-                                                <tr style="border-bottom: 2px solid #f0f2ee;">
+                                                <tr style="border-bottom: 2px solid #f0ece2;">
                                                     <td style="color: #5a6c3e; font-size: 14px; padding: 14px 0; font-weight: 600;">Tamaño</td>
                                                     <td align="right" style="color: #556620; font-size: 16px; padding: 14px 0; font-weight: 800;">{zip_size_mb:.2f} MB</td>
                                                 </tr>
@@ -105,14 +105,14 @@ def generar_email_html(total_capturas, total_records, zip_filename, zip_size_mb)
                                 </table>
                                 
                                 <!-- Nomenclatura -->
-                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background: #ffffff; border-left: 4px solid #C8E100; border-radius: 10px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background: #faf8f4; border-left: 4px solid #C8E100; border-radius: 10px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
                                     <tr>
                                         <td style="padding: 24px 24px;">
                                             <h3 style="margin: 0 0 16px 0; color: #3d4a18; font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;">📋 Nomenclatura de Archivos</h3>
                                             <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                                                 <tr>
                                                     <td style="color: #4a5a32; font-size: 13px; padding: 8px 0; line-height: 1.6;">
-                                                        <code style="background: linear-gradient(135deg, #f0f2ee 0%, #e8ebe5 100%); color: #3d4a18; padding: 6px 12px; border-radius: 6px; font-family: 'SF Mono', 'Monaco', 'Courier New', monospace; font-size: 12px; font-weight: 700; border: 1px solid #d4d9cc;">Muestra_record_{{ID}}.png</code>
+                                                        <code style="background: linear-gradient(135deg, #f0ece2 0%, #e8e4da 100%); color: #3d4a18; padding: 6px 12px; border-radius: 6px; font-family: 'SF Mono', 'Monaco', 'Courier New', monospace; font-size: 12px; font-weight: 700; border: 1px solid #d4d0c6;">Muestra_record_{{ID}}.png</code>
                                                         <span style="margin-left: 12px; color: #5a6c3e; font-weight: 600;">→ Muestra del Record ID correspondiente</span>
                                                     </td>
                                                 </tr>
