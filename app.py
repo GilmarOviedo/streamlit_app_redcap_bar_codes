@@ -145,7 +145,7 @@ def download_barcode_images(record_ids, username, password):
                 try:
                     img = Image.open(screenshot_path)
                     w, h = img.size
-                    new_w = int(w * 2 / 3)
+                    new_w = int(w * 1 / 3)
                     img_cropped = img.crop((0, 0, new_w, h))
                     img_cropped.save(screenshot_path)
                     downloaded_files.append(screenshot_path)
