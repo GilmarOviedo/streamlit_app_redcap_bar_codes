@@ -154,10 +154,14 @@ def obtener_estilos_css():
        RADIO BUTTONS
        ============================================ */
     .stRadio > div {
-        background: linear-gradient(135deg, #e8f5cd 0%, #d4e89e 100%);
+        background: linear-gradient(135deg, #556620 0%, #3d4a18 100%);
         padding: 1rem;
         border-radius: 10px;
-        border: 2px solid #9ccc65;
+        border: 2px solid #C8E100;
+    }
+    
+    .stRadio label {
+        color: #D4E157 !important;
     }
     
     /* ============================================
