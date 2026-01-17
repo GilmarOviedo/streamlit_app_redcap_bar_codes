@@ -70,26 +70,26 @@ def obtener_estilos_css():
        CARDS Y CONTENEDORES
        ============================================ */
     .info-card {
-        background: #ffffff;
-        border: 2px solid #e8ebe5;
-        border-left: 4px solid #C8E100;
+        background: linear-gradient(135deg, #e8f5cd 0%, #d4e89e 100%);
+        border: 2px solid #9ccc65;
+        border-left: 4px solid #689f38;
         border-radius: 12px;
         padding: 1.5rem;
         margin: 1rem 0;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        box-shadow: 0 2px 8px rgba(104, 159, 56, 0.1);
     }
     
     .success-card {
-        background: linear-gradient(135deg, #f0f7e8 0%, #e8f5e0 100%);
-        border: 2px solid #C8E100;
+        background: linear-gradient(135deg, #c5e1a5 0%, #aed581 100%);
+        border: 2px solid #689f38;
         border-radius: 12px;
         padding: 1.5rem;
         margin: 1rem 0;
     }
     
     .warning-card {
-        background: linear-gradient(135deg, #fffbf0 0%, #fff8e1 100%);
-        border: 2px solid #ffca28;
+        background: linear-gradient(135deg, #fff9c4 0%, #fff59d 100%);
+        border: 2px solid #fdd835;
         border-left: 4px solid #f57f17;
         border-radius: 12px;
         padding: 1.5rem;
@@ -138,30 +138,49 @@ def obtener_estilos_css():
        RADIO BUTTONS
        ============================================ */
     .stRadio > div {
-        background: #ffffff;
+        background: linear-gradient(135deg, #e8f5cd 0%, #d4e89e 100%);
         padding: 1rem;
         border-radius: 10px;
-        border: 2px solid #e8ebe5;
+        border: 2px solid #9ccc65;
     }
     
     /* ============================================
        EXPANDERS
        ============================================ */
     .streamlit-expanderHeader {
-        background: linear-gradient(135deg, #f5f7f4 0%, #e8ebe5 100%);
-        border: 2px solid #d4d9cc;
+        background: linear-gradient(135deg, #c5e1a5 0%, #aed581 100%);
+        border: 2px solid #689f38;
         border-radius: 8px;
         font-weight: 600;
-        color: #3d4a18;
+        color: #1b5e20;
+    }
+    
+    .streamlit-expanderContent {
+        background: linear-gradient(135deg, #e8f5cd 0%, #d4e89e 100%);
+        border: 2px solid #9ccc65;
+        border-top: none;
+        border-radius: 0 0 8px 8px;
     }
     
     /* ============================================
        DATAFRAMES
        ============================================ */
     .dataframe {
-        border: 2px solid #e8ebe5;
+        background: linear-gradient(135deg, #e8f5cd 0%, #d4e89e 100%);
+        border: 2px solid #9ccc65;
         border-radius: 8px;
         overflow: hidden;
+    }
+    
+    .dataframe th {
+        background: linear-gradient(135deg, #c5e1a5 0%, #aed581 100%) !important;
+        color: #1b5e20 !important;
+        font-weight: 700 !important;
+    }
+    
+    .dataframe td {
+        background: transparent !important;
+        color: #2d3e1f !important;
     }
     
     /* ============================================
@@ -222,32 +241,38 @@ def obtener_estilos_css():
        FILE UPLOADER
        ============================================ */
     .stFileUploader {
-        background: #ffffff;
-        border: 2px dashed #C8E100;
+        background: linear-gradient(135deg, #e8f5cd 0%, #d4e89e 100%);
+        border: 3px dashed #689f38;
         border-radius: 12px;
         padding: 2rem;
         transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(104, 159, 56, 0.15);
     }
     
     .stFileUploader:hover {
-        border-color: #556620;
-        background: #f8f9f7;
+        border-color: #33691e;
+        background: linear-gradient(135deg, #dcedc8 0%, #c5e1a5 100%);
+        box-shadow: 0 4px 12px rgba(104, 159, 56, 0.25);
+    }
+    
+    .stFileUploader > div {
+        background: transparent !important;
     }
     
     /* ============================================
        DOWNLOAD BUTTON
        ============================================ */
     .stDownloadButton > button {
-        background: linear-gradient(135deg, #ffffff 0%, #f5f7f4 100%);
-        color: #3d4a18;
-        border: 2px solid #C8E100;
+        background: linear-gradient(135deg, #c5e1a5 0%, #aed581 100%);
+        color: #1b5e20;
+        border: 2px solid #689f38;
         border-radius: 8px;
         font-weight: 600;
     }
     
     .stDownloadButton > button:hover {
-        background: linear-gradient(135deg, #f5f7f4 0%, #e8ebe5 100%);
-        border-color: #556620;
+        background: linear-gradient(135deg, #aed581 0%, #9ccc65 100%);
+        border-color: #33691e;
     }
     </style>
     """
