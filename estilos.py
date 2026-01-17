@@ -164,18 +164,19 @@ def obtener_estilos_css():
        EXPANDERS
        ============================================ */
     .streamlit-expanderHeader {
-        background: linear-gradient(135deg, #c5e1a5 0%, #aed581 100%);
-        border: 2px solid #689f38;
+        background: linear-gradient(135deg, #556620 0%, #3d4a18 100%);
+        border: 2px solid #C8E100;
         border-radius: 8px;
         font-weight: 600;
-        color: #1b5e20;
+        color: #D4E157;
     }
     
     .streamlit-expanderContent {
-        background: linear-gradient(135deg, #e8f5cd 0%, #d4e89e 100%);
-        border: 2px solid #9ccc65;
+        background: linear-gradient(135deg, #3d4a18 0%, #2d3e1f 100%);
+        border: 2px solid #C8E100;
         border-top: none;
         border-radius: 0 0 8px 8px;
+        padding: 1.5rem;
     }
     
     /* ============================================
