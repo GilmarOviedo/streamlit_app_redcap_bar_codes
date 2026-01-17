@@ -13,11 +13,20 @@ def obtener_estilos_css():
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
     
+    /* Texto general en fondo oscuro */
+    .main p, .main label, .main span, .main div {
+        color: #e8f5cd !important;
+    }
+    
+    .main h1, .main h2, .main h3 {
+        color: #D4E157 !important;
+    }
+    
     /* ============================================
        CONTENEDOR PRINCIPAL
        ============================================ */
     .main {
-        background: linear-gradient(135deg, #f8f9f7 0%, #e8ebe5 100%);
+        background: linear-gradient(135deg, #3d4a18 0%, #556620 100%);
         padding: 2rem 1rem;
     }
     
@@ -55,15 +64,15 @@ def obtener_estilos_css():
        SECCIONES
        ============================================ */
     .section-header {
-        background: linear-gradient(135deg, #3d4a18 0%, #556620 100%);
-        color: #D4E157;
+        background: linear-gradient(135deg, #C8E100 0%, #D4E157 100%);
+        color: #1a2510;
         padding: 1rem 1.5rem;
         border-radius: 10px;
         font-size: 16px;
         font-weight: 700;
         margin: 1.5rem 0 1rem 0;
-        border-left: 5px solid #C8E100;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border-left: 5px solid #556620;
+        box-shadow: 0 2px 8px rgba(200, 225, 0, 0.3);
     }
     
     /* ============================================
@@ -122,16 +131,23 @@ def obtener_estilos_css():
        INPUTS
        ============================================ */
     .stTextInput > div > div > input {
-        border: 2px solid #e8ebe5;
+        background: linear-gradient(135deg, #4d5a20 0%, #3d4a18 100%);
+        border: 2px solid #C8E100;
         border-radius: 8px;
         padding: 0.75rem;
         font-size: 14px;
+        color: #D4E157 !important;
         transition: all 0.3s ease;
     }
     
     .stTextInput > div > div > input:focus {
-        border-color: #C8E100;
-        box-shadow: 0 0 0 3px rgba(200, 225, 0, 0.1);
+        border-color: #D4E157;
+        background: linear-gradient(135deg, #556620 0%, #4d5a20 100%);
+        box-shadow: 0 0 0 3px rgba(212, 225, 87, 0.2);
+    }
+    
+    .stTextInput > div > div > input::placeholder {
+        color: rgba(212, 225, 87, 0.5) !important;
     }
     
     /* ============================================
@@ -241,22 +257,26 @@ def obtener_estilos_css():
        FILE UPLOADER
        ============================================ */
     .stFileUploader {
-        background: linear-gradient(135deg, #e8f5cd 0%, #d4e89e 100%);
-        border: 3px dashed #689f38;
+        background: linear-gradient(135deg, #556620 0%, #3d4a18 100%);
+        border: 3px dashed #C8E100;
         border-radius: 12px;
         padding: 2rem;
         transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(104, 159, 56, 0.15);
+        box-shadow: 0 2px 8px rgba(200, 225, 0, 0.3);
     }
     
     .stFileUploader:hover {
-        border-color: #33691e;
-        background: linear-gradient(135deg, #dcedc8 0%, #c5e1a5 100%);
-        box-shadow: 0 4px 12px rgba(104, 159, 56, 0.25);
+        border-color: #D4E157;
+        background: linear-gradient(135deg, #6a7f28 0%, #4d5a20 100%);
+        box-shadow: 0 4px 12px rgba(212, 225, 87, 0.4);
     }
     
     .stFileUploader > div {
         background: transparent !important;
+    }
+    
+    .stFileUploader label {
+        color: #D4E157 !important;
     }
     
     /* ============================================
