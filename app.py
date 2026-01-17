@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 import os
@@ -15,6 +16,8 @@ from PIL import Image
 import time
 import shutil
 import zipfile  # ← IMPORTACIÓN FALTANTE
+from estilos import obtener_estilos_css
+from email_template import generar_email_html
 
 # =========================================
 # Credenciales desde st.secrets
@@ -162,7 +165,7 @@ def download_barcode_images(record_ids, username, password):
                 time.sleep(1.4)
 
                 # Tomar captura de pantalla
-                screenshot_path = os.path.join(folder, f"{id_val}.png")
+                screenshot_path = os.path.join(folder, f"Muestra_record_{id_val}.png")
                 tr_el.screenshot(screenshot_path)
 
                 # Procesar y recortar imagen
@@ -252,20 +255,14 @@ def send_email_with_zip(record_ids, attachment_files, email_receiver):
         em['To'] = email_receiver
         em['Subject'] = f"Códigos de Barras RedCap Presiente Lab Muestras Humanas"
 
-        html_body = f"""
-        <html>
-          <body>
-            <h2>Códigos de Barras Descargados</h2>
-            <p><strong>Total de imágenes procesadas:</strong> {len(attachment_files)}</p>
-            <p><strong>Archivo adjunto:</strong> {os.path.basename(zip_path)} (formato ZIP)</p>
-            <br>
-            <p><em>💡 Para ver las imágenes, descarga y descomprime el archivo ZIP adjunto.</em></p>
-            <br>
-            <p>Nota: La imagen 5.png corresponde al record_id 5 del proyecto PRESIENTE LAB MUESTRAS HUMANAS y así con cada imagen dentro del zip<p>
-            <p><em>Enviado desde la aplicación de Streamlit</em></p>
-          </body>
-        </html>
-        """
+        html_body = generar_email_html(
+            total_capturas=len(attachment_files),
+            total_records=len(record_ids),
+            zip_filename=os.path.basename(zip_path),
+            zip_size_mb=os.path.getsize(zip_path) / (1024 * 1024)
+        )
+
+       
         em.add_alternative(html_body, subtype="html")
 
         # Agregar archivo ZIP como adjunto
