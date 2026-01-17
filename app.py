@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import os
@@ -15,7 +14,8 @@ from selenium.common.exceptions import TimeoutException
 from PIL import Image
 import time
 import shutil
-import zipfile  # ← IMPORTACIÓN FALTANTE
+import zipfile
+from datetime import datetime
 from estilos import obtener_estilos_css
 from email_template import generar_email_html
 
@@ -32,13 +32,10 @@ except Exception as e:
     st.stop()
 
 # =========================================
-# Opciones de Chrome para Entorno en la Nube
+# Opciones de Chrome
 # =========================================
 def get_chrome_options():
-    """Obtener opciones de Chrome optimizadas para entornos en la nube"""
     chrome_options = Options()
-    
-    # Opciones esenciales para entornos en la nube/sin cabeza
     chrome_options.add_argument("--headless=new")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
@@ -59,55 +56,39 @@ def get_chrome_options():
     chrome_options.add_argument("--single-process")
     chrome_options.add_argument("--disable-web-security")
     chrome_options.add_argument("--disable-features=VizDisplayCompositor")
-    
-    # Optimizaciones de memoria
     chrome_options.add_argument("--memory-pressure-off")
     chrome_options.add_argument("--max_old_space_size=4096")
-    
-    # Deshabilitar logs
     chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
     chrome_options.add_experimental_option('useAutomationExtension', False)
     chrome_options.add_argument("--log-level=3")
-    
     return chrome_options
 
 # =========================================
-# Función de Captura de Pantalla de Códigos de Barras de RedCap
+# Captura de Pantalla
 # =========================================
 def download_barcode_images(record_ids, username, password):
-    """Descargar imágenes de códigos de barras para Record IDs específicos desde RedCap"""
     driver = None
     try:
-        st.info("Iniciando Chrome para descarga de códigos de barras...")
-        
         chrome_options = get_chrome_options()
-        
-        # Crear directorio temporal para descargas
         folder = "codigos_barras"
         os.makedirs(folder, exist_ok=True)
         
-        # Intentar inicializar el driver
         try:
             driver = webdriver.Chrome(options=chrome_options)
-            st.success("✅ Driver de Chrome inicializado exitosamente")
         except Exception as e:
-            st.error(f"❌ Fallo al inicializar el driver de Chrome: {e}")
-            st.info("💡 Esto podría deberse a la falta del navegador Chrome en el entorno de la nube.")
+            st.error(f"❌ Fallo al inicializar Chrome: {e}")
             return []
         
-        wait = WebDriverWait(driver, 30)  # Tiempo de espera aumentado
-
-        # Iniciar sesión en RedCap
+        wait = WebDriverWait(driver, 30)
         st.info("🔐 Iniciando sesión en RedCap...")
         url = "https://redcap.prisma.org.pe/redcap_v14.5.11/DataEntry/record_status_dashboard.php?pid=19"
         
         try:
             driver.get(url)
         except Exception as e:
-            st.error(f"❌ Fallo al cargar la URL de RedCap: {e}")
+            st.error(f"❌ Fallo al cargar RedCap: {e}")
             return []
 
-        # Proceso de inicio de sesión
         try:
             username_field = wait.until(EC.presence_of_element_located((By.ID, "username")))
             username_field.clear()
@@ -119,9 +100,9 @@ def download_barcode_images(record_ids, username, password):
             password_field.send_keys(Keys.ENTER)
             
             wait.until(EC.url_contains("record_status_dashboard.php"))
-            st.success("✅ ¡Inicio de sesión exitoso en RedCap!")
+            st.success("✅ Sesión iniciada")
         except Exception as e:
-            st.error(f"❌ Fallo en el inicio de sesión: {e}")
+            st.error(f"❌ Fallo en inicio de sesión: {e}")
             return []
 
         TARGET_URL_TEMPLATE = (
@@ -130,9 +111,7 @@ def download_barcode_images(record_ids, username, password):
 
         downloaded_files = []
         progress_bar = st.progress(0)
-        
         total_ids = len(record_ids)
-
         status_message = st.empty()
         
         for idx, id_val in enumerate(record_ids):
@@ -142,33 +121,27 @@ def download_barcode_images(record_ids, username, password):
                 target_url = TARGET_URL_TEMPLATE.format(id_val=id_val)
                 driver.get(target_url)
                 
-                # Esperar a que la página se cargue
                 WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "table tbody")))
 
-                # Esperar a que desaparezcan los indicadores de carga
                 try:
                     loading_locator = (By.XPATH, "//*[contains(text(),'PIPING DATA')]")
                     WebDriverWait(driver, 5).until(EC.invisibility_of_element_located(loading_locator))
                 except TimeoutException:
-                    pass  # No se encontró indicador de carga o desapareció
+                    pass
 
-                # Encontrar el elemento del código de barras
                 try:
                     tr_selector = "tr#barcode-tr"
                     tr_el = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, tr_selector)))
                 except TimeoutException:
-                    st.warning(f"⚠️ Elemento de código de barras no encontrado para ID: {id_val}")
+                    st.warning(f"⚠️ Código de barras no encontrado para ID: {id_val}")
                     continue
 
-                # Hacer scroll al elemento y esperar
                 driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", tr_el)
                 time.sleep(1.4)
 
-                # Tomar captura de pantalla
                 screenshot_path = os.path.join(folder, f"Muestra_record_{id_val}.png")
                 tr_el.screenshot(screenshot_path)
 
-                # Procesar y recortar imagen
                 try:
                     img = Image.open(screenshot_path)
                     w, h = img.size
@@ -176,7 +149,6 @@ def download_barcode_images(record_ids, username, password):
                     img_cropped = img.crop((0, 0, new_w, h))
                     img_cropped.save(screenshot_path)
                     downloaded_files.append(screenshot_path)
-                    status_message.success(f"✅ Código de barras descargado para ID: {id_val}")
                 except Exception as e:
                     st.error(f"❌ Error al procesar imagen para ID {id_val}: {e}")
 
@@ -185,75 +157,61 @@ def download_barcode_images(record_ids, username, password):
             except Exception as e:
                 st.error(f"❌ Error al procesar ID {id_val}: {e}")
             
-            # Actualizar barra de progreso
             progress_bar.progress((idx + 1) / total_ids)
 
         return downloaded_files
 
     except Exception as e:
-        st.error(f"❌ Error en la descarga de códigos de barras: {e}")
+        st.error(f"❌ Error en descarga: {e}")
         return []
     
     finally:
         if driver:
             try:
                 driver.quit()
-                st.info("🔄 Driver de Chrome cerrado")
             except:
                 pass
 
 # =========================================
-# Función de Creación de ZIP - FUNCIÓN FALTANTE
+# Creación de ZIP
 # =========================================
 def create_zip_file(attachment_files, record_ids):
-    """Crear un archivo ZIP que contenga todas las imágenes de códigos de barras."""
     try:
-        # Crear nombre del archivo ZIP con marca de tiempo
-        from datetime import datetime
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        zip_filename = f"codigos_barras_redcap_{timestamp}.zip"
+        timestamp = datetime.now().strftime("%Y%m%d")
+        zip_filename = f"muestras_{timestamp}.zip"
         zip_path = os.path.join("codigos_barras", zip_filename)
-        
-        st.info(f"📦 Creando archivo ZIP: {zip_filename}")
         
         with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
             for file_path in attachment_files:
                 if os.path.exists(file_path):
-                    # Agregar archivo al ZIP con solo el nombre del archivo (no la ruta completa)
                     filename = os.path.basename(file_path)
                     zipf.write(file_path, filename)
                     
-        # Verificar que el ZIP se haya creado exitosamente
         if os.path.exists(zip_path):
-            zip_size = os.path.getsize(zip_path) / (1024 * 1024)  # Tamaño en MB
-            st.success(f"✅ Archivo ZIP creado exitosamente: {zip_filename} ({zip_size:.2f} MB)")
             return zip_path
         else:
-            st.error("❌ Fallo al crear el archivo ZIP")
+            st.error("❌ Fallo al crear ZIP")
             return None
             
     except Exception as e:
-        st.error(f"❌ Error al crear el archivo ZIP: {e}")
+        st.error(f"❌ Error al crear ZIP: {e}")
         return None
 
 # =========================================
-# Función de Email con Adjunto ZIP - FUNCIÓN FALTANTE
+# Envío de Email
 # =========================================
 def send_email_with_zip(record_ids, attachment_files, email_receiver):
-    """Enviar email con imágenes de códigos de barras como archivo ZIP adjunto."""
     try:
-        # Primero crear el archivo ZIP
         zip_path = create_zip_file(attachment_files, record_ids)
         
         if not zip_path or not os.path.exists(zip_path):
-            st.error("❌ No se pudo crear el archivo ZIP para el email")
+            st.error("❌ No se pudo crear el ZIP")
             return False
         
-        # Crear email
         em = EmailMessage()
         em['From'] = email_sender
         em['To'] = email_receiver
-        em['Subject'] = f"Códigos de Barras RedCap Presiente Lab Muestras Humanas"
+        em['Subject'] = "🧬 Códigos de Barras | Lab Muestras Humanas - PRESIENTE"
 
         html_body = generar_email_html(
             total_capturas=len(attachment_files),
@@ -261,11 +219,9 @@ def send_email_with_zip(record_ids, attachment_files, email_receiver):
             zip_filename=os.path.basename(zip_path),
             zip_size_mb=os.path.getsize(zip_path) / (1024 * 1024)
         )
-
        
         em.add_alternative(html_body, subtype="html")
 
-        # Agregar archivo ZIP como adjunto
         with open(zip_path, "rb") as f:
             zip_filename = os.path.basename(zip_path)
             em.add_attachment(
@@ -275,8 +231,6 @@ def send_email_with_zip(record_ids, attachment_files, email_receiver):
                 filename=zip_filename
             )
 
-        # Enviar email
-        st.info("📧 Enviando email con archivo ZIP adjunto...")
         context = ssl.create_default_context()
         with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context, timeout=30) as smtp:
             smtp.login(email_sender, email_password)
@@ -285,24 +239,19 @@ def send_email_with_zip(record_ids, attachment_files, email_receiver):
         return True
 
     except Exception as e:
-        st.error(f"❌ Fallo en el envío del email: {e}")
+        st.error(f"❌ Fallo al enviar email: {e}")
         return False
 
 # =========================================
-# Función de Procesamiento de CSV
+# Procesamiento CSV
 # =========================================
 def process_csv_upload():
-    """Manejar la carga y validación de CSV para record IDs"""
     st.subheader("📁 Cargar CSV con Record IDs")
     
-    # Mostrar formato de ejemplo
     with st.expander("📄 Ejemplo de Formato CSV"):
-        example_data = pd.DataFrame({
-            "record_id": ["1", "1048", "1049", "1055"]
-        })
+        example_data = pd.DataFrame({"record_id": ["1", "1048", "1049", "1055"]})
         st.dataframe(example_data, use_container_width=True, hide_index=True)
         
-        # Botón de descarga para tabla de ejemplo
         example_csv = example_data.to_csv(index=False).encode("utf-8")
         st.download_button(
             label="📥 Descargar tabla de muestra",
@@ -311,71 +260,58 @@ def process_csv_upload():
             mime="text/csv",
         )
     
-    # Cargador de archivos
     uploaded_file = st.file_uploader("Cargar tu archivo CSV", type=["csv"])
     
     if uploaded_file is not None:
         try:
-            # Leer CSV
             df = pd.read_csv(uploaded_file)
             
-            # Verificar si existe la columna 'record_id'
             if "record_id" not in df.columns:
-                st.error("❌ El CSV no contiene una columna llamada 'record_id'.")
+                st.error("❌ El CSV no contiene 'record_id'.")
                 return None
             
-            # Mostrar vista previa de datos cargados
-            st.subheader("📊 Vista Previa de Datos Cargados")
+            st.subheader("📊 Vista Previa")
             st.dataframe(df.head(10), use_container_width=True, hide_index=True)
-            st.info(f"Total de filas en CSV: {len(df)}")
+            st.info(f"Total de filas: {len(df)}")
             
-            # Convertir a numérico y validar
             df["record_id_numeric"] = pd.to_numeric(df["record_id"], errors="coerce")
-            
-            # Detectar valores no numéricos
             invalid_values = df.loc[df["record_id_numeric"].isnull(), "record_id"]
             
             if not invalid_values.empty:
-                st.warning("⚠️ Se encontraron valores no numéricos en 'record_id':")
+                st.warning("⚠️ Valores no numéricos encontrados:")
                 st.write(invalid_values.tolist())
-                st.info("Solo se procesarán los valores numéricos válidos.")
+                st.info("Solo se procesarán valores numéricos válidos.")
             
-            # Procesar solo valores numéricos válidos
             valid_df = df.dropna(subset=["record_id_numeric"]).copy()
             
             if len(valid_df) == 0:
-                st.error("❌ No se encontraron record IDs numéricos válidos en el CSV.")
+                st.error("❌ No se encontraron IDs válidos.")
                 return None
             
-            # Convertir a enteros
             valid_df["record_id_int"] = valid_df["record_id_numeric"].astype(int)
             record_ids = valid_df["record_id_int"].tolist()
             
-            # Mostrar resultados de validación
-            st.success(f"✅ Se encontraron {len(record_ids)} record IDs válidos")
+            st.success(f"✅ {len(record_ids)} record IDs válidos encontrados")
             
-            # Mostrar IDs válidos
-            with st.expander(f"📋 Record IDs Válidos ({len(record_ids)} elementos)"):
+            with st.expander(f"📋 Ver IDs ({len(record_ids)} elementos)"):
                 st.write(record_ids)
             
             return record_ids
             
         except Exception as e:
-            st.error(f"❌ Error al procesar el archivo CSV: {e}")
+            st.error(f"❌ Error al procesar CSV: {e}")
             return None
     
     return None
 
 # =========================================
-# Función de Verificación del Sistema
+# Verificación del Sistema
 # =========================================
 def check_system_requirements():
-    """Verificar si los componentes del sistema requeridos están disponibles"""
-    st.subheader("🔍 Verificación de Requisitos del Sistema")
+    st.subheader("🔍 Verificación de Requisitos")
     
     checks = []
     
-    # Verificar disponibilidad de Chrome
     try:
         chrome_options = Options()
         chrome_options.add_argument("--headless=new")
@@ -383,42 +319,37 @@ def check_system_requirements():
         chrome_options.add_argument("--disable-dev-shm-usage")
         driver = webdriver.Chrome(options=chrome_options)
         driver.quit()
-        checks.append(("✅", "Navegador Chrome", "Disponible"))
+        checks.append(("✅", "Chrome", "Disponible"))
     except Exception as e:
-        checks.append(("❌", "Navegador Chrome", f"No disponible: {str(e)[:50]}..."))
+        checks.append(("❌", "Chrome", f"No disponible: {str(e)[:50]}..."))
     
-    # Mostrar verificaciones
     for status, component, message in checks:
         st.write(f"{status} **{component}**: {message}")
     
     return all(check[0] == "✅" for check in checks)
 
 # =========================================
-# Interfaz de Usuario de Streamlit
+# Interfaz Principal
 # =========================================
 st.markdown("<h1 style='font-size: 20px;'>Descargar códigos de barras de RedCap (PRESIENTE LAB MUESTRAS HUMANAS) y enviar por Email</h1>", unsafe_allow_html=True)
 st.write("Ingresa Record IDs manualmente o carga un archivo CSV para descargar imágenes de códigos de barras desde RedCap y enviarlas por email.")
 st.markdown(obtener_estilos_css(), unsafe_allow_html=True)
-# Sección de verificación del sistema
+
 with st.expander("🔧 Verificación del Sistema"):
-    if st.button("Ejecutar Verificación del Sistema"):
+    if st.button("Ejecutar Verificación"):
         system_ok = check_system_requirements()
         if not system_ok:
-            st.warning("⚠️ Algunos requisitos del sistema están faltando. La aplicación podría no funcionar correctamente.")
+            st.warning("⚠️ Algunos requisitos faltan")
 
-# =========================================
-# Selección de Método de Entrada
-# =========================================
 st.subheader("🎯 Elegir Método de Entrada")
 input_method = st.radio(
-    "¿Cómo te gustaría proporcionar los Record IDs?",
+    "¿Cómo proporcionar Record IDs?",
     ["Entrada Manual", "Carga de CSV"],
     horizontal=True
 )
 
 record_ids = []
 
-# Método de entrada manual
 if input_method == "Entrada Manual":
     st.subheader("✍️ Entrada Manual")
     record_ids_input = st.text_input(
@@ -429,85 +360,74 @@ if input_method == "Entrada Manual":
     
     if record_ids_input.strip():
         try:
-            # Parsear Record IDs
             for rid in record_ids_input.split(","):
                 rid = rid.strip()
                 if rid:
                     try:
                         record_ids.append(int(rid))
                     except ValueError:
-                        st.warning(f"⚠️ '{rid}' no es un número válido, omitiendo.")
+                        st.warning(f"⚠️ '{rid}' no es válido")
         except Exception as e:
-            st.error(f"❌ Error al parsear Record IDs: {e}")
+            st.error(f"❌ Error: {e}")
 
-# Método de carga de CSV
 elif input_method == "Carga de CSV":
     csv_record_ids = process_csv_upload()
     if csv_record_ids:
         record_ids = csv_record_ids
 
-# =========================================
-# Entrada de Email y Procesamiento
-# =========================================
 if record_ids:
     st.subheader("📧 Configuración de Email")
-    st.success(f"✅ Listo para procesar {len(record_ids)} Record IDs: {record_ids[:10]}{'...' if len(record_ids) > 10 else ''}")
+    st.success(f"✅ Listo para procesar {len(record_ids)} Record IDs")
     
     email_receiver_input = st.text_input(
-        "Ingresa Email del Destinatario",
+        "Email del Destinatario",
         placeholder="ejemplo@dominio.com"
     )
     
-    # Sección de procesamiento
-    if st.button("🚀 Descargar Códigos de Barras y Enviar Email", type="primary"):
+    if st.button("🚀 Descargar y Enviar Email", type="primary"):
         if not email_receiver_input.strip():
-            st.error("❌ Por favor ingresa un email del destinatario")
+            st.error("❌ Ingresa un email válido")
         else:
             try:
                 st.info(f"🎯 Procesando {len(record_ids)} Record IDs...")
                 
-                # Descargar imágenes de códigos de barras
-                with st.spinner("📥 Descargando imágenes de códigos de barras..."):
+                with st.spinner("📥 Descargando..."):
                     downloaded_files = download_barcode_images(record_ids, redcap_username, redcap_password)
 
                 if downloaded_files:
-                    st.success(f"✅ ¡Se descargaron exitosamente {len(downloaded_files)} imágenes de códigos de barras!")
+                    st.success(f"✅ {len(downloaded_files)} muestras descargadas")
 
-                    # Mostrar imágenes descargadas
-                    st.subheader("📸 Imágenes de Códigos de Barras Descargadas:")
+                    st.subheader("📸 Imágenes:")
                     cols = st.columns(min(3, len(downloaded_files)))
                     for i, file_path in enumerate(downloaded_files):
                         col_idx = i % len(cols)
                         with cols[col_idx]:
                             if os.path.exists(file_path):
-                                st.image(file_path, caption=f"ID: {os.path.basename(file_path).split('.')[0]}")
+                                record_id = os.path.basename(file_path).split('_')[-1].split('.')[0]
+                                st.image(file_path, caption=f"Record {record_id}")
 
-                    # Enviar email con ZIP - LLAMADA ACTUALIZADA
-                    with st.spinner("📧 Creando archivo ZIP y enviando email..."):
+                    with st.spinner("📧 Enviando..."):
                         if send_email_with_zip(record_ids, downloaded_files, email_receiver_input):
-                            st.success("✅ ¡Email enviado exitosamente con archivo ZIP de códigos de barras adjunto!")
+                            st.success("✅ Email enviado exitosamente")
                             
-                            # Mostrar información del ZIP
                             zip_files = [f for f in os.listdir("codigos_barras") if f.endswith('.zip')]
                             if zip_files:
                                 zip_file = zip_files[0]
                                 zip_path = os.path.join("codigos_barras", zip_file)
                                 if os.path.exists(zip_path):
                                     zip_size = os.path.getsize(zip_path) / (1024 * 1024)
-                                    st.info(f"📦 Detalles del archivo ZIP: {zip_file} ({zip_size:.2f} MB)")
+                                    st.info(f"📦 {zip_file} ({zip_size:.2f} MB)")
                             
-                            # Limpieza
                             try:
                                 shutil.rmtree("codigos_barras")
                                 st.info("🧹 Archivos temporales limpiados")
                             except:
                                 pass
                         else:
-                            st.error("❌ Fallo al enviar el email")
+                            st.error("❌ Fallo al enviar")
                 else:
-                    st.error("❌ No se descargaron exitosamente imágenes de códigos de barras")
-                    st.info("💡 Intenta ejecutar la verificación del sistema para identificar problemas potenciales.")
+                    st.error("❌ No se descargaron imágenes")
 
             except Exception as e:
-                st.error(f"❌ Error de procesamiento: {e}")
+                st.error(f"❌ Error: {e}")
                 st.exception(e)
